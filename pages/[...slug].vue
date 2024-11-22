@@ -1,25 +1,40 @@
+ 
 <script setup>
+const { $preview } = useNuxtApp()
 const { slug } = useRoute().params
-const resolveRelations = ['popular-articles.articles']
+const url = slug && slug.length > 0 ? slug.join('/') : 'home'
+ 
+// API options
+const version = $preview ? 'draft' : 'published'
 
-const story = await useAsyncStoryblok(
-  slug && slug.length > 0 ? slug.join('/') : 'home',
-  {
-    version: 'draft',
-    resolve_relations: resolveRelations,
+const resolveRelations = ['popular-articles.articles']
+ 
+// Full Static with refresh approach
+const { data: story, pending } = await useAsyncData(
+  async () => {
+    const { data } = await useStoryblokApi().get(`cdn/stories/${url.replace(/\/$/, '')}`, {
+      version,
+      language: locale.value,
+      resolve_relations: resolveRelations
+    })
+    return data?.story
   },
-  {
-    resolveRelations,
+);
+ 
+// Load the bridge in preview mode
+onMounted(() => {
+  if ($preview && story.value && story.value.id) {
+    useStoryblokBridge(
+      story.value.id,
+      (evStory) => story.value = evStory,
+      {
+        resolveRelations,
+      }
+    );
   }
-)
+});
 </script>
  
 <template>
-  <StoryblokComponent v-if="story" :blok="story.content" />
+  <StoryblokComponent v-if="pending === false && story" :blok="story.content" />
 </template>
-
-
-
-
-
- 
