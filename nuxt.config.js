@@ -18,7 +18,12 @@ export default defineNuxtConfig({
     strategy: 'prefix_except_default',
     locales: ['en', 'es'],
     defaultLocale: 'en', // default locale
-  }
+  },
+  ssr: process.env.NUXT_PUBLIC_NODE_ENV === 'production' ? true : false,
+  runtimeConfig: {
+    public: {
+      NODE_ENV: process.env.NODE_ENV
+    }
+  },
 })
-
 
