@@ -16,15 +16,17 @@
 <script setup>
 defineProps({ blok: Object })
  
+const isPreview = useRuntimeConfig().public.NODE_ENV !== 'production'
 const { locale } = useI18n()
 const storyblokApi = useStoryblokApi()
  
 const { data } = await storyblokApi.get('cdn/stories', {
-  version: 'draft',
+  version: isPreview ? 'draft' : 'published',
   language: locale.value,
   starts_with: 'blog',
   is_startpage: false,
 })
+
 // console.log("stories retrieved: ")
 // console.log(data.stories.length)
 // for (let i = 0; i < data.stories.length; i++) {

@@ -1,6 +1,7 @@
 import { apiPlugin } from '@storyblok/vue'
 
 export default defineNuxtConfig({
+  ssr: process.env.NUXT_PUBLIC_NODE_ENV === 'production' ? true : false,
   compatibilityDate: '2024-11-01',
   devtools: { enabled: true },
   modules: [
@@ -19,7 +20,6 @@ export default defineNuxtConfig({
     locales: ['en', 'es'],
     defaultLocale: 'en', // default locale
   },
-  ssr: process.env.NUXT_PUBLIC_NODE_ENV === 'production' ? true : false,
   runtimeConfig: {
     public: {
       NODE_ENV: process.env.NODE_ENV
